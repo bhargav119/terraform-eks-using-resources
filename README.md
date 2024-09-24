@@ -187,11 +187,11 @@ resource "aws_eks_node_group" "eks_ng_public" {
   ami_type = "AL2_x86_64"  
   capacity_type = "ON_DEMAND"
   disk_size = 20
-  instance_types = ["t3.medium"]
+  instance_types = ["t3.micro"]
   
   
   remote_access {
-    ec2_ssh_key = "eks-terraform-key"
+    ec2_ssh_key = "terraform-eks"
   }
 
   scaling_config {
@@ -234,11 +234,11 @@ resource "aws_eks_node_group" "eks_ng_private" {
   ami_type = "AL2_x86_64"  
   capacity_type = "ON_DEMAND"
   disk_size = 20
-  instance_types = ["t3.medium"]
+  instance_types = ["t3.micro"]
   
   
   remote_access {
-    ec2_ssh_key = "eks-terraform-key"    
+    ec2_ssh_key = "terraform-eks"    
   }
 
   scaling_config {
@@ -269,10 +269,10 @@ resource "aws_eks_node_group" "eks_ng_private" {
 ```
 ## Step-09: eks.auto.tfvars
 ```t
-cluster_name = "eksdemo1"
+cluster_name = "eks-1"
 cluster_service_ipv4_cidr = "172.20.0.0/16"
-cluster_version = "1.26"
-cluster_endpoint_private_access = true
+cluster_version = "1.30"
+cluster_endpoint_private_access = false
 cluster_endpoint_public_access = true
 cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
 ```
@@ -428,16 +428,16 @@ kubectl get svc
 ## Step-15: Connect to EKS Worker Nodes using Bastion Host
 ```t
 # Connect to Bastion EC2 Instance
-ssh -i private-key/eks-terraform-key.pem ec2-user@<Bastion-EC2-Instance-Public-IP>
+ssh -i private-key/terraform-eks.pem ec2-user@<Bastion-EC2-Instance-Public-IP>
 cd /tmp
 
 # Connect to Kubernetes Worker Nodes - Public Node Group
-ssh -i private-key/eks-terraform-key.pem ec2-user@<Public-NodeGroup-EC2Instance-PublicIP> 
+ssh -i private-key/terraform-eks.pem ec2-user@<Public-NodeGroup-EC2Instance-PublicIP> 
 [or]
 ec2-user@<Public-NodeGroup-EC2Instance-PrivateIP>
 
 # Connect to Kubernetes Worker Nodes - Private Node Group from Bastion Host
-ssh -i eks-terraform-key.pem ec2-user@<Private-NodeGroup-EC2Instance-PrivateIP>
+ssh -i terraform-eks.pem ec2-user@<Private-NodeGroup-EC2Instance-PrivateIP>
 
 ##### REPEAT BELOW STEPS ON BOTH PUBLIC AND PRIVATE NODE GROUPS ####
 # Verify if kubelet and kube-proxy running
@@ -564,11 +564,11 @@ resource "aws_eks_node_group" "eks_ng_private" {
   ami_type = "AL2_x86_64"  
   capacity_type = "ON_DEMAND"
   disk_size = 20
-  instance_types = ["t3.medium"]
+  instance_types = ["t3.micro"]
   
   
   remote_access {
-    ec2_ssh_key = "eks-terraform-key"    
+    ec2_ssh_key = "terraform-eks"    
   }
 
   scaling_config {
